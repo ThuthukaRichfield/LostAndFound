@@ -12,7 +12,25 @@ namespace LostAndFound.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Claim> builder)
         {
-            builder.HasBaseType<BaseEntity>();
+            builder.HasKey(x => x.ClaimId);
+
+            builder.Property(x => x.CreatedBy)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            builder.Property(x => x.CreatedDate)
+                .IsRequired();
+
+            builder.Property(x => x.LastModifiedBy)
+                .HasMaxLength(150);
+
+            builder.Property(x => x.LastModifiedDate);
+
+            builder.Property(x => x.Disabled)
+                .IsRequired();
+
+            builder.Property(x => x.Deleted)
+                .IsRequired();
 
             builder.Property(x => x.ItemId)
                 .IsRequired();

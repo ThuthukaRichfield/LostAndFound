@@ -11,5 +11,11 @@ namespace LostAndFound.Domain.Repositories
     {
         [IntentManaged(Mode.Fully)]
         Task<TProjection?> FindByIdProjectToAsync<TProjection>(int itemId, CancellationToken cancellationToken = default);
+        [IntentManaged(Mode.Fully)]
+        Task<Item?> FindByIdAsync(int itemId, CancellationToken cancellationToken = default);
+        [IntentManaged(Mode.Fully)]
+        Task<Item?> FindByIdAsync(int itemId, Func<IQueryable<Item>, IQueryable<Item>> queryOptions, CancellationToken cancellationToken = default);
+        [IntentManaged(Mode.Fully)]
+        Task<List<Item>> FindByIdsAsync(int[] itemIds, CancellationToken cancellationToken = default);
     }
 }

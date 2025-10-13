@@ -3,7 +3,6 @@ using Intent.RoslynWeaver.Attributes;
 using LostAndFound.Domain.Entities;
 using LostAndFound.Domain.Repositories;
 using LostAndFound.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 [assembly: DefaultIntentManaged(Mode.Fully)]
 [assembly: IntentTemplate("Intent.EntityFrameworkCore.Repositories.Repository", Version = "1.0")]
@@ -13,11 +12,9 @@ namespace LostAndFound.Infrastructure.Repositories
     [IntentManaged(Mode.Merge, Signature = Mode.Fully)]
     public class DisputeRepository : RepositoryBase<Dispute, Dispute, ApplicationDbContext>, IDisputeRepository
     {
-        private readonly ApplicationDbContext _dbContext;
 
         public DisputeRepository(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
-            _dbContext = dbContext;
         }
 
         public async Task<TProjection?> FindByIdProjectToAsync<TProjection>(
@@ -27,9 +24,24 @@ namespace LostAndFound.Infrastructure.Repositories
             return await FindProjectToAsync<TProjection>(x => x.DisputeId == disputeId, cancellationToken);
         }
 
-        public void Add(Dispute entity)
+        public async Task<Dispute?> FindByIdAsync(int disputeId, CancellationToken cancellationToken = default)
         {
-            _dbContext.Database.ExecuteSqlInterpolated($"INSERT INTO Disputes (DisputeId, Reason, Status, ClaimId) VALUES({entity.DisputeId}, {entity.Reason}, {entity.Status}, {entity.ClaimId})");
+            return await FindAsync(x => x.DisputeId == disputeId, cancellationToken);
+        }
+
+        public async Task<Dispute?> FindByIdAsync(
+            int disputeId,
+            Func<IQueryable<Dispute>, IQueryable<Dispute>> queryOptions,
+            CancellationToken cancellationToken = default)
+        {
+            return await FindAsync(x => x.DisputeId == disputeId, queryOptions, cancellationToken);
+        }
+
+        public async Task<List<Dispute>> FindByIdsAsync(int[] disputeIds, CancellationToken cancellationToken = default)
+        {
+            // Force materialization - Some combinations of .net9 runtime and EF runtime crash with "Convert ReadOnlySpan to List since expression trees can't handle ref struct"
+            var idList = disputeIds.ToList();
+            return await FindAllAsync(x => idList.Contains(x.DisputeId), cancellationToken);
         }
     }
 }

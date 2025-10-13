@@ -15,8 +15,6 @@ namespace LostAndFound.Infrastructure.Persistence
         {
         }
 
-        public DbSet<BaseEntity> BaseEntities { get; set; }
-        public DbSet<BaseNamedEntity> BaseNamedEntities { get; set; }
         public DbSet<Claim> Claims { get; set; }
         public DbSet<Dispute> Disputes { get; set; }
         public DbSet<Item> Items { get; set; }
@@ -27,8 +25,6 @@ namespace LostAndFound.Infrastructure.Persistence
             base.OnModelCreating(modelBuilder);
 
             ConfigureModel(modelBuilder);
-            modelBuilder.ApplyConfiguration(new BaseEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new BaseNamedEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ClaimConfiguration());
             modelBuilder.ApplyConfiguration(new DisputeConfiguration());
             modelBuilder.ApplyConfiguration(new ItemConfiguration());

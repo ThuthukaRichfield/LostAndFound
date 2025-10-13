@@ -1,10 +1,11 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Intent.RoslynWeaver.Attributes;
 
 [assembly: IntentTemplate("Intent.Entities.DomainEntity", Version = "2.0")]
 
 namespace LostAndFound.Domain.Entities
 {
-    public class BaseEntity
+    public abstract class BaseEntity
     {
         public BaseEntity()
         {

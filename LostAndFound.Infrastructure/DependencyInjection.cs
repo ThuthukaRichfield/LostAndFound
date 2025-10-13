@@ -22,8 +22,6 @@ namespace LostAndFound.Infrastructure
                 options.UseLazyLoadingProxies();
             });
             services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
-            services.AddTransient<IBaseEntityRepository, BaseEntityRepository>();
-            services.AddTransient<IBaseNamedEntityRepository, BaseNamedEntityRepository>();
             services.AddTransient<IClaimRepository, ClaimRepository>();
             services.AddTransient<IDisputeRepository, DisputeRepository>();
             services.AddTransient<IItemRepository, ItemRepository>();

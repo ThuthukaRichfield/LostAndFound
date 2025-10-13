@@ -3,7 +3,6 @@ using Intent.RoslynWeaver.Attributes;
 using LostAndFound.Domain.Entities;
 using LostAndFound.Domain.Repositories;
 using LostAndFound.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 [assembly: DefaultIntentManaged(Mode.Fully)]
 [assembly: IntentTemplate("Intent.EntityFrameworkCore.Repositories.Repository", Version = "1.0")]
@@ -13,11 +12,9 @@ namespace LostAndFound.Infrastructure.Repositories
     [IntentManaged(Mode.Merge, Signature = Mode.Fully)]
     public class ItemRepository : RepositoryBase<Item, Item, ApplicationDbContext>, IItemRepository
     {
-        private readonly ApplicationDbContext _dbContext;
 
         public ItemRepository(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
-            _dbContext = dbContext;
         }
 
         public async Task<TProjection?> FindByIdProjectToAsync<TProjection>(
@@ -27,9 +24,24 @@ namespace LostAndFound.Infrastructure.Repositories
             return await FindProjectToAsync<TProjection>(x => x.ItemId == itemId, cancellationToken);
         }
 
-        public void Add(Item entity)
+        public async Task<Item?> FindByIdAsync(int itemId, CancellationToken cancellationToken = default)
         {
-            _dbContext.Database.ExecuteSqlInterpolated($"INSERT INTO Items (ItemId, Title, Category, Status, UserId) VALUES({entity.ItemId}, {entity.Title}, {entity.Category}, {entity.Status}, {entity.UserId})");
+            return await FindAsync(x => x.ItemId == itemId, cancellationToken);
+        }
+
+        public async Task<Item?> FindByIdAsync(
+            int itemId,
+            Func<IQueryable<Item>, IQueryable<Item>> queryOptions,
+            CancellationToken cancellationToken = default)
+        {
+            return await FindAsync(x => x.ItemId == itemId, queryOptions, cancellationToken);
+        }
+
+        public async Task<List<Item>> FindByIdsAsync(int[] itemIds, CancellationToken cancellationToken = default)
+        {
+            // Force materialization - Some combinations of .net9 runtime and EF runtime crash with "Convert ReadOnlySpan to List since expression trees can't handle ref struct"
+            var idList = itemIds.ToList();
+            return await FindAllAsync(x => idList.Contains(x.ItemId), cancellationToken);
         }
     }
 }
