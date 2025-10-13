@@ -1,8 +1,10 @@
 using System.Reflection;
+using AutoMapper;
 using FluentValidation;
 using Intent.RoslynWeaver.Attributes;
 using LostAndFound.Application.Common.Behaviours;
 using LostAndFound.Application.Common.Validation;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +27,7 @@ namespace LostAndFound.Application
                 cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
                 cfg.AddOpenBehavior(typeof(UnitOfWorkBehaviour<,>));
             });
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IValidatorProvider, ValidatorProvider>();
             return services;

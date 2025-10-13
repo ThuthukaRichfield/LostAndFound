@@ -1,5 +1,5 @@
 using Intent.RoslynWeaver.Attributes;
-using LostAndFound.Domain.Common.Interfaces;
+using LostAndFound.Application.Common.Interfaces;
 using LostAndFound.Domain.Entities;
 using LostAndFound.Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LostAndFound.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext, IUnitOfWork
+    public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

@@ -1,7 +1,6 @@
 using System.Transactions;
 using Intent.RoslynWeaver.Attributes;
 using LostAndFound.Application.Common.Interfaces;
-using LostAndFound.Domain.Common.Interfaces;
 using MediatR;
 
 [assembly: DefaultIntentManaged(Mode.Fully)]
@@ -18,9 +17,9 @@ namespace LostAndFound.Application.Common.Behaviours
     public class UnitOfWorkBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : notnull, ICommand
     {
-        private readonly IUnitOfWork _dataSource;
+        private readonly IApplicationDbContext _dataSource;
 
-        public UnitOfWorkBehaviour(IUnitOfWork dataSource)
+        public UnitOfWorkBehaviour(IApplicationDbContext dataSource)
         {
             _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         }

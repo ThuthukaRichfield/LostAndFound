@@ -1,8 +1,7 @@
 using Intent.RoslynWeaver.Attributes;
-using LostAndFound.Domain.Common.Interfaces;
-using LostAndFound.Domain.Repositories;
+using LostAndFound.Application.Common.Interfaces;
+using LostAndFound.Infrastructure.Configuration;
 using LostAndFound.Infrastructure.Persistence;
-using LostAndFound.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,11 +20,8 @@ namespace LostAndFound.Infrastructure
                 options.UseInMemoryDatabase("DefaultConnection");
                 options.UseLazyLoadingProxies();
             });
-            services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
-            services.AddTransient<IClaimRepository, ClaimRepository>();
-            services.AddTransient<IDisputeRepository, DisputeRepository>();
-            services.AddTransient<IItemRepository, ItemRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+            services.AddHttpClients(configuration);
             return services;
         }
     }
