@@ -20,6 +20,6 @@ namespace LostAndFound.Domain.Entities
 
         public virtual User User { get; set; }
 
-        public virtual Item Item { get; set; }
+        public virtual Item Item { get; set; } // COmment
     }
 }
