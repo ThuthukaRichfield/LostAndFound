@@ -1,4 +1,5 @@
 using Intent.RoslynWeaver.Attributes;
+using LostAndFound.Application.Common.Models;
 using LostAndFound.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,7 @@ namespace LostAndFound.Application.Common.Interfaces
         DbSet<Dispute> Disputes { get; }
         DbSet<Item> Items { get; }
         DbSet<User> Users { get; }
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task<OperationStatus> SaveChangesAsync(CancellationToken cancellationToken);
+        //Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

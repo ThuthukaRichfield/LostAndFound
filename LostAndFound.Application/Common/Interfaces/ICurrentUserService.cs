@@ -10,5 +10,6 @@ namespace LostAndFound.Application.Common.Interfaces
         Task<ICurrentUser?> GetAsync();
         Task<bool> IsInRoleAsync(string role);
         Task<bool> AuthorizeAsync(string policy);
+        string UserEmail { get; }
     }
 }
