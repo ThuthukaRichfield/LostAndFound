@@ -10,5 +10,11 @@ namespace LostAndFound.Api.Controllers
         {
             return Ok(await Mediator.Send(query));
         }
+
+        [HttpGet("get-users")]
+        public async Task<IActionResult> GetMyWorkflows([FromQuery] GetUsersQuery query)
+        {
+            return Ok(await Mediator.Send(query));
+        }
     }
 }
