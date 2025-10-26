@@ -9,6 +9,6 @@ namespace LostAndFound.Domain
     {
         Pending,
         Approved,
-        Rejected
+        Rejected,
     }
 }
