@@ -10,6 +10,8 @@ namespace LostAndFound.Domain.Entities
         {
             Title = null!;
             Category = null!;
+            Location = null!;
+            LostDescription = null!;
             User = null!;
         }
 
@@ -22,6 +24,14 @@ namespace LostAndFound.Domain.Entities
         public ItemStatus Status { get; set; }
 
         public int UserId { get; set; }
+
+        public string Location { get; set; }
+
+        public DateTime DateLost { get; set; }
+
+        public IList<byte>? LostImage { get; set; } = [];
+
+        public string LostDescription { get; set; }
 
         public virtual User User { get; set; }
     }

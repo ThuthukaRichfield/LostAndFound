@@ -18,6 +18,7 @@ namespace LostAndFound.Application.Services.Items
     {
         public ItemStatus? Status { get; set; }
         public string? SearchTerm { get; set; }
+        public int UserId { get; set; }
     }
 
     public class GetItemsQueryHandler : IRequestHandler<GetItemsQuery, List<ItemDto>>
@@ -50,7 +51,16 @@ namespace LostAndFound.Application.Services.Items
             // If we have passed a status, only get those users
             if (request.Status.HasValue)
             {
-                entities = entities.Where(x => x.Status.Equals(request.Status.Value)).ToList();
+                // Handles My Items case
+                if (request.Status.Value == ItemStatus.Claimed)
+                {
+                    //entities = entities.Where(x => x.UserId == request.UserId).ToList();
+                }
+                else
+                {
+                    entities = entities.Where(x => x.Status.Equals(request.Status.Value)).ToList();
+                }
+
             }
 
             // Order the users in descending order by UserId

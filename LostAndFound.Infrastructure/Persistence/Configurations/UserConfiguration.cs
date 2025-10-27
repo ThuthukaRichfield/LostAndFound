@@ -37,7 +37,8 @@ namespace LostAndFound.Infrastructure.Persistence.Configurations
                 .HasMaxLength(200);
 
             builder.Property(x => x.Email)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(150);
 
             builder.Property(x => x.Pasword)
                 .IsRequired()

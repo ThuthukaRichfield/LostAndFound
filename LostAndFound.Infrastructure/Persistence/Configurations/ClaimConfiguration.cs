@@ -38,6 +38,12 @@ namespace LostAndFound.Infrastructure.Persistence.Configurations
             builder.Property(x => x.UserId)
                 .IsRequired();
 
+            builder.Property(x => x.FoundImage);
+
+            builder.Property(x => x.FoundDescription)
+                .IsRequired()
+                .HasMaxLength(250);
+
             builder.HasOne(x => x.User)
                 .WithMany()
                 .HasForeignKey(x => x.UserId)

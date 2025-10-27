@@ -8,6 +8,7 @@ namespace LostAndFound.Domain.Entities
     {
         public Claim()
         {
+            FoundDescription = null!;
             User = null!;
             Item = null!;
         }
@@ -17,6 +18,10 @@ namespace LostAndFound.Domain.Entities
         public int ItemId { get; set; }
 
         public int UserId { get; set; }
+
+        public IList<byte>? FoundImage { get; set; } = [];
+
+        public string FoundDescription { get; set; }
 
         public virtual User User { get; set; }
 

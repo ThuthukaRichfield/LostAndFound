@@ -46,6 +46,19 @@ namespace LostAndFound.Infrastructure.Persistence.Configurations
             builder.Property(x => x.UserId)
                 .IsRequired();
 
+            builder.Property(x => x.Location)
+                .IsRequired()
+                .HasMaxLength(250);
+
+            builder.Property(x => x.DateLost)
+                .IsRequired();
+
+            builder.Property(x => x.LostImage);
+
+            builder.Property(x => x.LostDescription)
+                .IsRequired()
+                .HasMaxLength(250);
+
             builder.HasOne(x => x.User)
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
