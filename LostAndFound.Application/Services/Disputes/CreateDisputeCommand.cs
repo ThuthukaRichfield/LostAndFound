@@ -45,7 +45,7 @@ namespace LostAndFound.Application.Services.Disputes
                     return OperationStatus.CreateFromException("Claim not found.", new Exception($"Claim with ID {request.ClaimId} not found."));
                 }
 
-                //claim.Status = ClaimStatus.Disputed;
+                //claim = ClaimStatus.Disputed;
 
                 // Update Claim in DB
                 _dbContext.Claims.Update(claim);

@@ -44,6 +44,19 @@ namespace LostAndFound.Application.Services.Claims
                     return OperationStatus.CreateFromException("User not found.", new Exception($"User with ID {request.UserId} not found."));
                 }
 
+                // Get User the Item will be linked to
+                var item = await _dbContext.Items.FindAsync(request.ItemId, cancellationToken);
+
+                // Check if User exists
+                if (item == null)
+                {
+                    return OperationStatus.CreateFromException("Item not found.", new Exception($"Item with ID {request.ItemId} not found."));
+                } 
+                else if (item.Status != ItemStatus.Found)
+                {
+                    return OperationStatus.CreateFromException("Item is not available for claiming.", new Exception($"Item with ID {request.ItemId} is not marked as Found."));
+                }
+
                 // Create Object
                 var newClaim = new Claim
                 {

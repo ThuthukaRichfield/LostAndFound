@@ -17,7 +17,7 @@ namespace LostAndFound.Application.Services.Claims
 {
     public class GetClaimsQuery : IRequest<List<ClaimDto>>
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 
     public class GetClaimsQueryHandler : IRequestHandler<GetClaimsQuery, List<ClaimDto>>
@@ -37,6 +37,11 @@ namespace LostAndFound.Application.Services.Claims
             var entities = await _dbContext.Claims
                  .ProjectTo<ClaimDto>(_mapper.ConfigurationProvider)
                  .ToListAsync(cancellationToken);
+
+            if (request.UserId.HasValue)
+            {
+                entities = entities.Where(x => x.UserId == request.UserId.Value).ToList();
+            }
 
             // Order the users in descending order by UserId
             entities = entities.OrderByDescending(x => x.ClaimId).ToList();

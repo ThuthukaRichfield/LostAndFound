@@ -1,4 +1,5 @@
-﻿using LostAndFound.Application.Services.Users;
+﻿using LostAndFound.Application.Services.Items;
+using LostAndFound.Application.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LostAndFound.Api.Controllers
@@ -13,6 +14,12 @@ namespace LostAndFound.Api.Controllers
 
         [HttpGet("get-users")]
         public async Task<IActionResult> GetMyWorkflows([FromQuery] GetUsersQuery query)
+        {
+            return Ok(await Mediator.Send(query));
+        }
+
+        [HttpGet("get-user-by-id")]
+        public async Task<IActionResult> GetItemById([FromQuery] GetUserById query)
         {
             return Ok(await Mediator.Send(query));
         }

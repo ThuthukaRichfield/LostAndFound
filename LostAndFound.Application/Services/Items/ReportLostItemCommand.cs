@@ -17,7 +17,8 @@ namespace LostAndFound.Application.Services.Users
         public int UserId { get; set; }
         public string Title { get; set; }
         public string Category { get; set; }
-        public ItemStatus Status { get; set; }
+        public string Description { get; set; }
+        public byte[]? Image { get; set; }
     }
 
     public class ReportLostItemCommandHandler : IRequestHandler<ReportLostItemCommand, OperationStatus>
@@ -46,12 +47,14 @@ namespace LostAndFound.Application.Services.Users
                     return OperationStatus.CreateFromException("User not found.", new Exception($"User with ID {request.UserId} not found."));
                 }
 
-                // Create Object
+                // Create Lost Object
                 var newItem = new Item
                 {
                     Title = request.Title,
                     Category = request.Category,
-                    Status = request.Status,
+                    LostDescription = request.Description,
+                    LostImage = request.Image,
+                    Status = ItemStatus.Lost,
                     User = user
                 };
 

@@ -10,5 +10,6 @@ namespace LostAndFound.Domain
         Pending,
         Approved,
         Rejected,
+        Disputed
     }
 }
