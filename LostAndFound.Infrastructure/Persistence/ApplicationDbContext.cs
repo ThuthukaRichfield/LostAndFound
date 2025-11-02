@@ -2,7 +2,9 @@ using Intent.RoslynWeaver.Attributes;
 using LostAndFound.Application.Common.Interfaces;
 using LostAndFound.Application.Common.Models;
 using LostAndFound.Domain.Entities;
+using LostAndFound.Infrastructure.Identity;
 using LostAndFound.Infrastructure.Persistence.Configurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -11,7 +13,7 @@ using System;
 
 namespace LostAndFound.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
     {
         private readonly ICurrentUserService _currentUserService;
 

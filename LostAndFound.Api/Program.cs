@@ -6,6 +6,8 @@ using LostAndFound.Infrastructure;
 using LostAndFound.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.AspNetCore.Identity;
+using LostAndFound.Infrastructure.Identity; // Assuming ApplicationUser is here
 
 [assembly: DefaultIntentManaged(Mode.Fully)]
 [assembly: IntentTemplate("Intent.AspNetCore.Program", Version = "1.0")]
@@ -18,14 +20,19 @@ namespace LostAndFound.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // 1. Existing DbContext registration (MUST be kept)
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
                 // 💡 REPLACE with your actual database provider and connection string
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-
-                // OR for SQLite:
-                // options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            // 2. NEW: Identity service registration (links to the DbContext above)
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add services to the container.
             builder.Services.AddControllers(
