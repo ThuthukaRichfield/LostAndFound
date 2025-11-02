@@ -16,19 +16,21 @@ namespace LostAndFound.Application.Services.Users
         // Getters and setters
         public string Email { get; set; }
         public string Password { get; set; }
+        public string Name { get; set; }
         public UserRole UserRole { get; set; }
     }
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, OperationStatus>
     {
         // Variables
-        private readonly IApplicationDbContext _dbContext;
+        private readonly IIdentityService _identityService;
         private readonly ICurrentUserService _currentUserService;
-        
-        // Ctor
-        public CreateUserCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        private readonly IApplicationDbContext _dbContext;
+
+        public CreateUserCommandHandler(IApplicationDbContext dbContext, IIdentityService identityService, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
+            _identityService = identityService;
             _currentUserService = currentUserService;
         }
 
@@ -36,20 +38,29 @@ namespace LostAndFound.Application.Services.Users
         {
             try
             {
-                // Create Object
+                // Delegate the infrastructure/persistence work to the IIdentityService
+                var opStatus = await _identityService.CreateUserAsync(
+                    request.Email,
+                    request.Password,
+                    request.UserRole.ToString());
+
+                if (!opStatus.Status)
+                {
+                    throw new Exception("Error Saving to Identity");
+                }
+
                 var newUser = new User
                 {
                     Email = request.Email,
-                    Name = request.Email,
-                    Pasword = request.Password,
+                    Name = request.Name,
+                    Pasword = "NoLongerStoredHere",
                     Role = request.UserRole
                 };
 
-                // Add to DB
-               _dbContext.Users.Add(newUser);
+                _dbContext.Users.Add(newUser);
 
-                // Save to DB
-                var opStatus = await _dbContext.SaveChangesAsync(cancellationToken);
+                opStatus = await _dbContext.SaveChangesAsync(cancellationToken);
+
                 return opStatus;
             }
             catch (Exception ex)
