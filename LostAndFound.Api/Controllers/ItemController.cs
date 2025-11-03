@@ -6,10 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LostAndFound.Api.Controllers
 {
-    [ApiController]
     [Authorize]
     [Route("api/[controller]")]
-    public class ItemController : ApiController
+    public class ItemController : ControllerBase
     {
         private readonly ISender _mediator;
 

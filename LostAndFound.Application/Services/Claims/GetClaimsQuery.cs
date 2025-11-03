@@ -5,6 +5,7 @@ using LostAndFound.Application.Services.Claims.Models;
 using LostAndFound.Application.Services.Items.Models;
 using LostAndFound.Application.Services.Users.Models;
 using LostAndFound.Domain;
+using LostAndFound.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,7 +18,7 @@ namespace LostAndFound.Application.Services.Claims
 {
     public class GetClaimsQuery : IRequest<List<ClaimDto>>
     {
-        public int? UserId { get; set; }
+        public string? UserEmail { get; set; }
     }
 
     public class GetClaimsQueryHandler : IRequestHandler<GetClaimsQuery, List<ClaimDto>>
@@ -33,14 +34,26 @@ namespace LostAndFound.Application.Services.Claims
 
         public async Task<List<ClaimDto>> Handle(GetClaimsQuery request, CancellationToken cancellationToken)
         {
-            // Get all users
+            var user = new User();
+
+            if (!string.IsNullOrEmpty(request.UserEmail))
+            {
+                // Get User the Item will be linked to
+                user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email.ToLower().Equals(request.UserEmail.ToLower()), cancellationToken);
+            }
+            else
+            {
+                user = null;
+            }
+
+            // Get all claims
             var entities = await _dbContext.Claims
                  .ProjectTo<ClaimDto>(_mapper.ConfigurationProvider)
                  .ToListAsync(cancellationToken);
 
-            if (request.UserId.HasValue)
+            if (user != null)
             {
-                entities = entities.Where(x => x.UserId == request.UserId.Value).ToList();
+                entities = entities.Where(x => x.UserId == user.UserId).ToList();
             }
 
             // Order the users in descending order by UserId

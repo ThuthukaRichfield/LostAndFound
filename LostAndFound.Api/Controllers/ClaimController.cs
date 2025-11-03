@@ -10,7 +10,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-[ApiController]
 [Authorize]
 [Route("api/[controller]")]
 public class ClaimController : ControllerBase

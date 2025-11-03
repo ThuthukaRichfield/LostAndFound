@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LostAndFound.Api.Controllers
 {
-    [ApiController]
     [Authorize]
     [Route("api/[controller]")]
     public class DisputeController : ControllerBase

@@ -30,7 +30,7 @@ namespace LostAndFound.Application.Services.Claims
 
         public async Task<ClaimDto> Handle(GetClaimByIdQuery request, CancellationToken cancellationToken)
         {
-            // Get all users
+            // Get all claims
             var entity = await _dbContext.Claims
                 .ProjectTo<ClaimDto>(_mapper.ConfigurationProvider)
                 .FirstAsync(e => e.ClaimId == request.ClaimId, cancellationToken);

@@ -3,6 +3,7 @@ using LostAndFound.Application.Common.Models;
 using LostAndFound.Domain;
 using LostAndFound.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,9 @@ namespace LostAndFound.Application.Services.Claims
     public class CreateClaimCommand : IRequest<OperationStatus>, ICommand
     {
         // Getters and setters
-        public int UserId { get; set; }
+        public string UserEmail { get; set; }
         public int ItemId { get; set; }
+        public string Reason { get; set; }
     }
 
     public class CreateClaimCommandHandler : IRequestHandler<CreateClaimCommand, OperationStatus>
@@ -36,12 +38,12 @@ namespace LostAndFound.Application.Services.Claims
             try
             {
                 // Get User the Item will be linked to
-                var user = await _dbContext.Users.FindAsync(request.UserId, cancellationToken);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email.ToLower().Equals(request.UserEmail.ToLower()), cancellationToken);
 
                 // Check if User exists
                 if (user == null)
                 {
-                    return OperationStatus.CreateFromException("User not found.", new Exception($"User with ID {request.UserId} not found."));
+                    return OperationStatus.CreateFromException("User not found.", new Exception($"User {request.UserEmail} not found."));
                 }
 
                 // Get User the Item will be linked to
@@ -60,8 +62,9 @@ namespace LostAndFound.Application.Services.Claims
                 // Create Object
                 var newClaim = new Claim
                 {
-                    UserId = request.UserId,
-                    ItemId = request.ItemId,
+                    User = user,
+                    Item = item,
+                    FoundDescription = request.Reason
                 };
 
                 // Add to DB
