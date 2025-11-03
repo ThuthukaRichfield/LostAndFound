@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LostAndFound.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class ApiController : ControllerBase
     {

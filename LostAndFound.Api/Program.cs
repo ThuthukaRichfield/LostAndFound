@@ -86,9 +86,9 @@ namespace LostAndFound.Api
             app.UseExceptionHandler();
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthentication(); // ⚠️ MUST be BEFORE UseAuthorization
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.MapControllers(); // ⚠️ MUST be AFTER UseAuthorization
+            app.MapControllers();
             app.MapDefaultHealthChecks();
             app.UseSwashbuckle(builder.Configuration);
 

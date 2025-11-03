@@ -6,6 +6,7 @@ using LostAndFound.Application.Services.Disputes.Models;
 using LostAndFound.Application.Services.Items.Models;
 using LostAndFound.Application.Services.Users.Models;
 using LostAndFound.Domain;
+using LostAndFound.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,7 +19,6 @@ namespace LostAndFound.Application.Services.Disputes
 {
     public class GetDisputesQuery : IRequest<List<DisputeDto>>
     {
-        public int UserId { get; set; }
     }
 
     public class GetDisputesQueryHandler : IRequestHandler<GetDisputesQuery, List<DisputeDto>>

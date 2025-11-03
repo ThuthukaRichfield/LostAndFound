@@ -3,6 +3,7 @@ using LostAndFound.Application.Common.Models;
 using LostAndFound.Domain;
 using LostAndFound.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace LostAndFound.Application.Services.Disputes
     public class CreateDisputeCommand : IRequest<OperationStatus>, ICommand
     {
         // Getters and setters
+        public string UserEmail { get; set; }
         public int ClaimId { get; set; }
         public string Reason { get; set; }
     }
@@ -36,6 +38,15 @@ namespace LostAndFound.Application.Services.Disputes
         {
             try
             {
+                // Get User the Item will be linked to
+                var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email.ToLower().Equals(request.UserEmail.ToLower()), cancellationToken);
+
+                // Check if User exists
+                if (user == null)
+                {
+                    return OperationStatus.CreateFromException("User not found.", new Exception($"User {request.UserEmail} not found."));
+                }
+
                 // Get Claim the Dispute will be linked to
                 var claim = await _dbContext.Claims.FindAsync(request.ClaimId, cancellationToken);
 
@@ -45,10 +56,15 @@ namespace LostAndFound.Application.Services.Disputes
                     return OperationStatus.CreateFromException("Claim not found.", new Exception($"Claim with ID {request.ClaimId} not found."));
                 }
 
-                //claim = ClaimStatus.Disputed;
+                // Add Dispute in DB
+                var dispute = new Dispute() 
+                { 
+                    Claim = claim,
+                    Reason = request.Reason,
+                    Status = ClaimStatus.Disputed,
+                };
 
-                // Update Claim in DB
-                _dbContext.Claims.Update(claim);
+                _dbContext.Disputes.Add(dispute);
 
                 // Save to DB
                 var opStatus = await _dbContext.SaveChangesAsync(cancellationToken);
