@@ -46,7 +46,7 @@ namespace LostAndFound.Application.Services.Users
                 // Check if User exists
                 if (user == null)
                 {
-                    return OperationStatus.CreateFromException("User not found.", new Exception($"User with ID {request.UserEmail} not found."));
+                    return OperationStatus.CreateFromException("User not found.", new Exception($"User {request.UserEmail} not found."));
                 }
 
                 // Create Lost Object

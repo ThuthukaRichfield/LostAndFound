@@ -1,20 +1,26 @@
-﻿using System;
+﻿using LostAndFound.Application.Common.Interfaces;
+using LostAndFound.Application.Common.Models;
+using LostAndFound.Domain;
+using LostAndFound.Domain.Entities;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LostAndFound.Application.Common.Interfaces;
-using LostAndFound.Application.Common.Models;
-using LostAndFound.Domain;
-using MediatR;
 
 namespace LostAndFound.Application.Services.Items
 {
     public class ReportFoundItemCommand : IRequest<OperationStatus>, ICommand
     {
         // Getters and setters
-        public int UserId { get; set; }
-        public int ItemId { get; set; }
+        public string UserEmail { get; set; }
+        public string Title { get; set; }
+        public string Category { get; set; }
+        public string Description { get; set; }
+        public string Location { get; set; }
+        //public byte[]? Image { get; set; }
     }
 
     public class ReportFoundItemCommandHandler : IRequestHandler<ReportFoundItemCommand, OperationStatus>
@@ -35,18 +41,28 @@ namespace LostAndFound.Application.Services.Items
             try
             {
                 // Get User the Item will be linked to
-                var item = await _dbContext.Items.FindAsync(request.ItemId, cancellationToken);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email.ToLower().Equals(request.UserEmail.ToLower()), cancellationToken);
 
-                // Check if Item exists
-                if (item == null)
+                // Check if User exists
+                if (user == null)
                 {
-                    return OperationStatus.CreateFromException("Item not found.", new Exception($"Item with ID {request.ItemId} not found."));
+                    return OperationStatus.CreateFromException("User not found.", new Exception($"User {request.UserEmail} not found."));
                 }
 
-                item.Status = ItemStatus.Found;
+                // Create Lost Object
+                var newItem = new Item
+                {
+                    Title = request.Title,
+                    Category = request.Category,
+                    LostDescription = request.Description,
+                    Location = request.Location,
+                    LostImage = null,
+                    Status = ItemStatus.Found,
+                    User = user
+                };
 
-                // Update Item in DB
-                _dbContext.Items.Update(item);
+                // Add to DB
+                _dbContext.Items.Add(newItem);
 
                 // Save to DB
                 var opStatus = await _dbContext.SaveChangesAsync(cancellationToken);
