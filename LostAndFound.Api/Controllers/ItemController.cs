@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LostAndFound.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     public class ItemController : ControllerBase
     {
