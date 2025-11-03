@@ -50,7 +50,7 @@ namespace LostAndFound.Infrastructure.Services
         async public Task<UserDto> GetUserIdAsync(string email)
         {
             // Use the UserManager to find the user by their ID
-            var user = await _userManager.FindByIdAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
             {
@@ -60,10 +60,7 @@ namespace LostAndFound.Infrastructure.Services
             // Map the ApplicationUser (Infrastructure type) to the DTO (Application type)
             return new UserDto
             {
-                // = user.Id,
-                //Email = user.Email,
-                //UserName = user.UserName
-                //// Map custom properties here
+                Email = user.Email,
             };
         }
     }

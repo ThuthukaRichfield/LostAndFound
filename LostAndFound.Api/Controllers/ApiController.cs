@@ -1,8 +1,11 @@
-﻿using MediatR;
+﻿using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LostAndFound.Api.Controllers
 {
+    [Authorize]
+    [ApiController]
     public class ApiController : ControllerBase
     {
         private IMediator _mediator;

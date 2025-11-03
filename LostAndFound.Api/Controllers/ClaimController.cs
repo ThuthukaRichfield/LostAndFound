@@ -1,4 +1,8 @@
-﻿using LostAndFound.Infrastructure.Identity; // Your custom user
+﻿using LostAndFound.Api.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using LostAndFound.Application.Services.Claims;
+using LostAndFound.Infrastructure.Identity; // Your custom user
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -7,70 +11,32 @@ using System.Security.Claims;
 using System.Text;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class ClaimController : ControllerBase
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IConfiguration _configuration;
+    private readonly ISender _mediator;
 
-    public AuthController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IConfiguration configuration)
+    public ClaimController(ISender mediator)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _configuration = configuration;
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest model)
+    [HttpPost("create-claim")]
+    public async Task<IActionResult> CreateClaim(CreateClaimCommand query)
     {
-        var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
-
-        if (result.Succeeded)
-        {
-            var appUser = await _userManager.FindByEmailAsync(model.Email);
-
-            // 1. Generate the JWT
-            var token = GenerateJwtToken(appUser);
-
-            return Ok(new { Token = token });
-        }
-
-        return Unauthorized(new { Message = "Invalid login attempt." });
+        return Ok(await _mediator.Send(query));
     }
 
-    // 2. Helper method to create the token
-    private string GenerateJwtToken(ApplicationUser user)
+    [HttpGet("get-claims")]
+    public async Task<IActionResult> GetClaims([FromQuery] GetClaimsQuery query)
     {
-        var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(ClaimTypes.Email, user.Email)
-        // Add roles/other claims here
-    };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expiry = DateTime.Now.AddDays(7); // Token valid for 7 days
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expiry,
-            signingCredentials: credentials);
-
-        return new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(token);
+        return Ok(await _mediator.Send(query));
     }
 
-    // You will also need a simple DTO for the request body:
-    public class LoginRequest
+    [HttpGet("get-claim-by-id")]
+    public async Task<IActionResult> GetClaimById([FromQuery] GetClaimByIdQuery query)
     {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        return Ok(await _mediator.Send(query));
     }
 }

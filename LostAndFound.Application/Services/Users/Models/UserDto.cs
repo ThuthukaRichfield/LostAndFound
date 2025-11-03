@@ -20,6 +20,7 @@ namespace LostAndFound.Application.Services.Users.Models
 
         public int UserId { get; set; }
         public string Email { get; set; }
+        public string Name { get; set; }
         public UserRole Role { get; set; }
 
         public static UserDto Create(

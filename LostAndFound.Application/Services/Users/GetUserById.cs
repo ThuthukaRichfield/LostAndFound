@@ -16,7 +16,7 @@ namespace LostAndFound.Application.Services.Users
 {
     public class GetUserById : IRequest<UserDto>
     {
-        public string UserEmail { get; set; }
+        public int UserId { get; set; }
     }
 
     public class GetUserByIdHandler : IRequestHandler<GetUserById, UserDto>
@@ -35,10 +35,26 @@ namespace LostAndFound.Application.Services.Users
 
         public async Task<UserDto> Handle(GetUserById request, CancellationToken cancellationToken)
         {
-            // 1. Fetch user data using the Identity Service abstraction
-            var userDto = await _identityService.GetUserIdAsync(request.UserEmail);
+            var user = await _dbContext.Users
+                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(u => u.UserId == request.UserId, cancellationToken);
 
-            return userDto;
+            if (user != null)
+            {
+                // Fetch user data using the Identity Service abstraction
+                var identityUser = await _identityService.GetUserIdAsync(user.Email);
+
+                if (identityUser == null)
+                {
+                    user = null;
+                }
+                else
+                {
+                    user.Email = identityUser.Email;
+                }
+            }
+
+            return user;
         }
     }
 }
