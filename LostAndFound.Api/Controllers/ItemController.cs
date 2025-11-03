@@ -9,7 +9,7 @@ namespace LostAndFound.Api.Controllers
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
-    public class ItemController : ControllerBase
+    public class ItemController : ApiController
     {
         private readonly ISender _mediator;
 

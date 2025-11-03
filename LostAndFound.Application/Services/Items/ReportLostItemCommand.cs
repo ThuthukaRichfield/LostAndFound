@@ -3,6 +3,7 @@ using LostAndFound.Application.Common.Models;
 using LostAndFound.Domain;
 using LostAndFound.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,12 @@ namespace LostAndFound.Application.Services.Users
     public class ReportLostItemCommand : IRequest<OperationStatus>, ICommand
     {
         // Getters and setters
-        public int UserId { get; set; }
+        public string UserEmail { get; set; }
         public string Title { get; set; }
         public string Category { get; set; }
         public string Description { get; set; }
-        public byte[]? Image { get; set; }
+        public string Location { get; set; }
+        //public byte[]? Image { get; set; }
     }
 
     public class ReportLostItemCommandHandler : IRequestHandler<ReportLostItemCommand, OperationStatus>
@@ -39,12 +41,12 @@ namespace LostAndFound.Application.Services.Users
             try
             {
                 // Get User the Item will be linked to
-                var user = await _dbContext.Users.FindAsync(request.UserId, cancellationToken);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email.ToLower().Equals(request.UserEmail.ToLower()), cancellationToken);
 
                 // Check if User exists
                 if (user == null)
                 {
-                    return OperationStatus.CreateFromException("User not found.", new Exception($"User with ID {request.UserId} not found."));
+                    return OperationStatus.CreateFromException("User not found.", new Exception($"User with ID {request.UserEmail} not found."));
                 }
 
                 // Create Lost Object
@@ -53,7 +55,8 @@ namespace LostAndFound.Application.Services.Users
                     Title = request.Title,
                     Category = request.Category,
                     LostDescription = request.Description,
-                    LostImage = request.Image,
+                    Location = request.Location,
+                    LostImage = null,
                     Status = ItemStatus.Lost,
                     User = user
                 };
