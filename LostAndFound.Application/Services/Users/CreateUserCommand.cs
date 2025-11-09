@@ -46,7 +46,7 @@ namespace LostAndFound.Application.Services.Users
 
                 if (!opStatus.Status)
                 {
-                    throw new Exception("Error Saving to Identity");
+                    throw new Exception("Error Saving to Identity: " + opStatus.Exception);
                 }
 
                 var newUser = new User
