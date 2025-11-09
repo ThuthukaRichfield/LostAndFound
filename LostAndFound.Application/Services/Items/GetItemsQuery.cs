@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LostAndFound.Application.Common.Interfaces;
+using LostAndFound.Application.Services.Claims.Models;
 using LostAndFound.Application.Services.Items.Models;
 using LostAndFound.Application.Services.Users.Models;
 using LostAndFound.Domain;
@@ -35,15 +36,30 @@ namespace LostAndFound.Application.Services.Items
         public async Task<List<ItemDto>> Handle(GetItemsQuery request, CancellationToken cancellationToken)
         {
             // Get all users
-            var entities = await _dbContext.Items
-                 .ProjectTo<ItemDto>(_mapper.ConfigurationProvider)
-                 .ToListAsync(cancellationToken);
+            var items = await _dbContext.Items
+                .Include(e => e.User)
+                .ProjectTo<ItemDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
+
+            var claims = await _dbContext.Claims
+                .Include(e => e.Item)
+                .ProjectTo<ClaimDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
+
+            foreach (var item in items)
+            {
+                var claim = claims.FirstOrDefault(c => c.ItemId == item.ItemId);
+                if (claim != null)
+                {
+                    item.ClaimedBy = claim.CreatedBy;
+                }
+            }
 
             // If we have passed a status, only get those users
             if (!string.IsNullOrEmpty(request.SearchTerm))
             {
                 // Use equivalent of LIKE query on Title and Category
-                entities = entities.Where(x => x.Title.Contains(request.SearchTerm) ||
+                items = items.Where(x => x.Title.Contains(request.SearchTerm) ||
                     x.Category.Contains(request.SearchTerm))
                     .ToList();
             }
@@ -54,19 +70,19 @@ namespace LostAndFound.Application.Services.Items
                 // Handles My Items case
                 if (request.Status.Value == ItemStatus.Claimed)
                 {
-                    //entities = entities.Where(x => x.UserId == request.UserId).ToList();
+                    items = items.Where(x => x.ClaimedBy != null).ToList();
                 }
                 else
                 {
-                    entities = entities.Where(x => x.Status.Equals(request.Status.Value)).ToList();
+                    items = items.Where(x => x.Status.Equals(request.Status.Value)).ToList();
                 }
 
             }
 
             // Order the users in descending order by UserId
-            entities = entities.OrderByDescending(x => x.ItemId).ToList();
+            items = items.OrderByDescending(x => x.ItemId).ToList();
 
-            return entities;
+            return items;
         }
     }
 }

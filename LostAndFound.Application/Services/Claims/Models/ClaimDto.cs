@@ -18,28 +18,33 @@ namespace LostAndFound.Application.Services.Claims.Models
             ClaimId = 0;
             UserId = 0;
             ItemId = 0;
+            CreatedBy = string.Empty;
         }
 
         public int ClaimId { get; set; }
         public int UserId { get; set; }
         public int ItemId { get; set; }
+        public string CreatedBy { get; set; }
 
         public static ClaimDto Create(
             int claimId,
             int userId,
-            int itemId)
+            int itemId,
+            string createdBy)
         {
             return new ClaimDto
             {
                 ClaimId = claimId,
                 UserId = userId,
                 ItemId = itemId,
+                CreatedBy = createdBy
             };
         }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Claim, ClaimDto>();
+            profile.CreateMap<Claim, ClaimDto>()
+                .ForMember(d => d.CreatedBy, opts => opts.MapFrom(s => s.User.Email));
         }
     }
 }

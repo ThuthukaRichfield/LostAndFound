@@ -22,6 +22,7 @@ namespace LostAndFound.Application.Services.Items.Models
             LastModifiedDate = new DateTime();
             LastModifiedBy = null!;
             Status = ItemStatus.Lost;
+            ClaimedBy = null!;
         }
 
         public int ItemId { get; set; }
@@ -32,6 +33,7 @@ namespace LostAndFound.Application.Services.Items.Models
         public DateTime? LastModifiedDate { get; set; }
         public string? LastModifiedBy { get; set; }
         public ItemStatus Status { get; set; }
+        public string? ClaimedBy { get; set; }
 
         public static ItemDto Create(
             int itemId,
@@ -53,12 +55,14 @@ namespace LostAndFound.Application.Services.Items.Models
                 LastModifiedDate = lastModifiedDate,
                 LastModifiedBy = lastModifiedBy,
                 Status = status,
+                ClaimedBy = null
             };
         }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Item, ItemDto>();
+            profile.CreateMap<Item, ItemDto>()
+                .ForMember(d => d.CreatedBy, opts => opts.MapFrom(s => s.User.Email));
         }
     }
 }
