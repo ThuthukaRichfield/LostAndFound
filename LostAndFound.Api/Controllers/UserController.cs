@@ -16,19 +16,25 @@ namespace LostAndFound.Api.Controllers
         }
     
         [HttpPost("create-user")]
-        public async Task<IActionResult> GetAppUserEmail(CreateUserCommand query)
+        public async Task<IActionResult> RegisterUser(CreateUserCommand query)
         {
             return Ok(await _mediator.Send(query));
         }
 
         [HttpGet("get-users")]
-        public async Task<IActionResult> GetMyWorkflows([FromQuery] GetUsersQuery query)
+        public async Task<IActionResult> GetUsers([FromQuery] GetUsersQuery query)
         {
             return Ok(await _mediator.Send(query));
         }
 
         [HttpGet("get-user-by-id")]
-        public async Task<IActionResult> GetItemById([FromQuery] GetUserById query)
+        public async Task<IActionResult> GetUserById([FromQuery] GetUserById query)
+        {
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpPut("update-user-role")]
+        public async Task<IActionResult> UpdateUserRole(UpdateUserRoleCommand query)
         {
             return Ok(await _mediator.Send(query));
         }
