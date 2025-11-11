@@ -27,6 +27,12 @@ public class ClaimController : ControllerBase
         return Ok(await _mediator.Send(query));
     }
 
+    [HttpPost("manage-claim")]
+    public async Task<IActionResult> ManageClaim(ManageClaimCommand query)
+    {
+        return Ok(await _mediator.Send(query));
+    }
+
     [HttpGet("get-claims")]
     public async Task<IActionResult> GetClaims([FromQuery] GetClaimsQuery query)
     {
@@ -35,6 +41,12 @@ public class ClaimController : ControllerBase
 
     [HttpGet("get-claim-by-id")]
     public async Task<IActionResult> GetClaimById([FromQuery] GetClaimByIdQuery query)
+    {
+        return Ok(await _mediator.Send(query));
+    }
+
+    [HttpGet("get-claims_by_item")]
+    public async Task<IActionResult> GetClaimsByItem([FromQuery] GetClaimsByItemQuery query)
     {
         return Ok(await _mediator.Send(query));
     }

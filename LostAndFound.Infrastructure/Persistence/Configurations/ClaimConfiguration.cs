@@ -44,6 +44,9 @@ namespace LostAndFound.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(250);
 
+            builder.Property(x => x.Status)
+                .IsRequired();
+
             builder.HasOne(x => x.User)
                 .WithMany()
                 .HasForeignKey(x => x.UserId)

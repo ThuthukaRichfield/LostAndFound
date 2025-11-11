@@ -23,6 +23,8 @@ namespace LostAndFound.Domain.Entities
 
         public string FoundDescription { get; set; }
 
+        public ClaimStatus Status { get; set; }
+
         public virtual User User { get; set; }
 
         public virtual Item Item { get; set; }

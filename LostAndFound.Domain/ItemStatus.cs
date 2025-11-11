@@ -9,6 +9,7 @@ namespace LostAndFound.Domain
     {
         Lost,
         Found,
-        Claimed
+        Claimed,
+        Resolved
     }
 }

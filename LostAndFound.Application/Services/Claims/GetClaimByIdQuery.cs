@@ -32,6 +32,8 @@ namespace LostAndFound.Application.Services.Claims
         {
             // Get all claims
             var entity = await _dbContext.Claims
+                .Include(e => e.User)
+                .Include(e => e.Item)
                 .ProjectTo<ClaimDto>(_mapper.ConfigurationProvider)
                 .FirstAsync(e => e.ClaimId == request.ClaimId, cancellationToken);
 
