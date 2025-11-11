@@ -68,11 +68,11 @@ namespace LostAndFound.Application.Services.Claims
                     Status = ClaimStatus.Pending
                 };
 
-                item.Status = ItemStatus.Claimed;
+                //item.Status = ItemStatus.Claimed;
 
                 // Add to DB
                 _dbContext.Claims.Add(newClaim);
-                _dbContext.Items.Update(item);
+                //_dbContext.Items.Update(item);
 
                 // Save to DB
                 var opStatus = await _dbContext.SaveChangesAsync(cancellationToken);

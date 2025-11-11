@@ -26,6 +26,11 @@ namespace LostAndFound.Infrastructure.Services
 
         async Task<OperationStatus> IIdentityService.CreateUserAsync(string email, string password, string role)
         {
+            if (!email.ToLower().Contains("richfield.ac.za"))
+            {
+                return new OperationStatus { Status = false, Message = "This is not a valid Richfield Email" };
+            }
+
             // 1. Create the Identity User Object
             var user = new ApplicationUser { UserName = email, Email = email };
 

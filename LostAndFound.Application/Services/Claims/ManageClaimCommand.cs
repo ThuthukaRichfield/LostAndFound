@@ -66,7 +66,7 @@ namespace LostAndFound.Application.Services.Claims
                         {
                             // Approve this claim
                             claim.Status = ClaimStatus.Approved;
-                            currentItem.Status = ItemStatus.Resolved;
+                            currentItem.Status = ItemStatus.Claimed;
                         }
                         else
                         {
